@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flappy Air Ambulance - Speed Control</title>
+<title>Flappy Air Ambulance - Fixed Image</title>
 <style>
   body {
     margin: 0;
     background: #87ceeb;
     font-family: Arial, sans-serif;
     text-align: center;
-    user-select: none;
   }
   canvas {
     display: block;
@@ -23,15 +22,7 @@
     font-size: 18px;
     padding: 10px 20px;
     margin: 10px auto;
-    display: inline-block;
     cursor: pointer;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-  }
-  #startButton:hover {
-    background: #0056b3;
   }
   #score {
     font-size: 24px;
@@ -41,15 +32,6 @@
   #speedControl {
     margin: 15px auto;
     width: 300px;
-  }
-  #speedLabel {
-    font-size: 16px;
-    color: #fff;
-    text-shadow: 1px 1px 2px black;
-    margin-bottom: 5px;
-  }
-  input[type="range"] {
-    width: 100%;
   }
 </style>
 </head>
@@ -62,7 +44,7 @@
 <p id="score">Score: 0</p>
 
 <div id="speedControl">
-  <label id="speedLabel" for="speedSlider">Speed: 1.00</label>
+  <label for="speedSlider">Speed: <span id="speedLabel">1.00</span></label><br />
   <input type="range" id="speedSlider" min="0.5" max="3" step="0.05" value="1" />
 </div>
 
@@ -95,16 +77,14 @@ let score = 0;
 let gameRunning = false;
 let gameOver = false;
 
-// Sounds
 const flapSound = new Audio("https://actions.google.com/sounds/v1/animals/duck_quack.ogg");
 const hitSound = new Audio("https://actions.google.com/sounds/v1/impacts/crash.ogg");
 const pointSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 
-// Load helicopter image (flipped)
+// Valid base64 helicopter image (simple silhouette, flying right)
 const helicopterImage = new Image();
-helicopterImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABCCAYAAAAnBRXkAAAACXBIWXMAAAsTAAALEwEAmpwYAAABqklEQVR4nO3ZT0gEURSG4avlIuIIxLwwpLoMKXAy4FRrP6FYQbWIQzEIpVxCdBYAzCPX8ijFlfYELMvn7/Fk54c2ybmXUn+uXVn7a99vzuqrvl+r1ft/7+ub0+re3wCO+jloAc7w2iD8NRrjj3iHL8AP+0es4IvjiP0kTHfs6bNgkPNazkA3vIK5QcQYOwWIr7v0gyv58f1NvOxDrz8Ibht0jFjX+nx5R04HFZ8xgWy3byCe++D2je/TOxFtHV+C7c6X7GgCvsvmeUdvv0oNThxmLtMBK7tlGPMqrbXeL/7/TmKseWcNncZBPAcld4LnNsAv23m8jLAd3oWv1wW/6DNe20qIGt7B90M90W0CHd2A23FAucq7DNn+0DfZlm4lu9fLvJp02LcYIL/fP+5F2C/u45RyC43hM5EL6ys5NQEBzQyxJskPpVvAAAAYRJREFU4/5t6ybDUzAQhv8Emq5+YxjUGG7FxL9snPaVyqDvu+qJZbcQXVUZxu3E+CsGfg1z7+dpHD+WQwP60I8M40MP8RH9nk1xUX4jhsS/4sZ6oEeCx5Q8cgOXHK6w8cMp3qvFjuDcPD0P/m0kUOX0fcY6XTnB/Hp9G3b/z92ytk/+I3lTXzq2d8AAAAASUVORK5CYII=";
+helicopterImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABxElEQVR4nO2ZwUoDQRBFT7nAQS7KIxyiCsRbQIPqO5kAJQnOAHcYB3HECm6LqKjiBx6qDMDN33XPk+mr/T3ef0ZT8Mp0Mk5E0PgeM8hM4WAEAYwoQx4EIpR/9jSABXWWB7yfwBfk0AV+vIKj3Zl6V2d+F9BGACBhDcS4RzA+4kZsAzHsJyxAf1GHvPUS5JqEOGvB2JDlX5sRBbKdNHPbZ0MPpi45EQdGeg3zNgCvgfGrgPi1V6W5RwRMwiFaf81Jd2LgRGHswAOR6Bz15LDF4FwPQx9guKQ9DcB7EtDqkPH8jnd4jDJ4O5PgxQUFcZwD++knWphVAHc2MY8DZ3wwPT7jJ8F6wvskY9P9CECN0FOldjxMvp1zAi0V1AvYJwCng66pgq1DvIV8CG0ntltTfg/GUDhGzIOp9Mvjft+CIKwO7gFkvkLu/5k70yEmdMy9TkAu4d7CVqdsWcyK7e7ng1+dOkKzdkqXNs5r2FvYcKfTvOPD3yfg69W++d6VZAAAAAElFTkSuQmCC';
 
-// Controls
 function flap() {
   if (!gameRunning) return;
   helicopter.velocity = flapStrength;
@@ -119,13 +99,13 @@ document.addEventListener('keydown', e => {
     else flap();
   }
 });
+
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
   if (!gameRunning && !gameOver) startGame();
   else flap();
 });
 
-// Pipes generator
 function addPipe() {
   const pipeTopHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
   pipes.push({
@@ -136,9 +116,8 @@ function addPipe() {
   });
 }
 
-// Draw helicopter image after ensuring it’s loaded
 function drawHelicopter() {
-  if (!helicopterImage.complete) return;
+  if (!helicopterImage.complete || !helicopterImage.naturalWidth) return; // wait for image to load
   ctx.drawImage(helicopterImage, helicopter.x, helicopter.y, helicopter.width, helicopter.height);
 }
 
@@ -154,12 +133,10 @@ function drawScore() {
   scoreDisplay.textContent = `Score: ${score}`;
 }
 
-// Calculate spawn interval dynamically but ensure integer and reasonable minimum
 function getSpawnInterval() {
   return Math.max(20, Math.floor(90 / pipeSpeed));
 }
 
-// Game update logic
 function update() {
   helicopter.velocity += gravity;
   helicopter.y += helicopter.velocity;
@@ -203,11 +180,9 @@ function update() {
   pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
 
   frameCount++;
-  let spawnInterval = getSpawnInterval();
-  if (frameCount % spawnInterval === 0) addPipe();
+  if (frameCount % getSpawnInterval() === 0) addPipe();
 }
 
-// Draw everything
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPipes();
@@ -215,7 +190,6 @@ function draw() {
   drawScore();
 }
 
-// Game loop
 function gameLoop() {
   if (gameRunning) {
     update();
@@ -242,10 +216,9 @@ function startGame() {
   gameLoop();
 }
 
-// Update speed from slider
 speedSlider.addEventListener('input', () => {
   pipeSpeed = parseFloat(speedSlider.value);
-  speedLabel.textContent = `Speed: ${pipeSpeed.toFixed(2)}`;
+  speedLabel.textContent = pipeSpeed.toFixed(2);
 });
 
 startButton.addEventListener('click', () => {
