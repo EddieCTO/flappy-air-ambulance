@@ -154,6 +154,11 @@ function drawScore() {
   scoreDisplay.textContent = `Score: ${score}`;
 }
 
+// Calculate spawn interval dynamically but ensure integer and reasonable minimum
+function getSpawnInterval() {
+  return Math.max(20, Math.floor(90 / pipeSpeed));
+}
+
 // Game update logic
 function update() {
   helicopter.velocity += gravity;
@@ -198,7 +203,8 @@ function update() {
   pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
 
   frameCount++;
-  if (frameCount % Math.floor(90 / pipeSpeed) === 0) addPipe();
+  let spawnInterval = getSpawnInterval();
+  if (frameCount % spawnInterval === 0) addPipe();
 }
 
 // Draw everything
