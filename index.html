@@ -96,7 +96,7 @@ helicopterImg.onerror = () => {
 
 // Reset game variables
 function resetGame() {
-  helicopter.y = canvas.height / 2;
+  helicopter.y = canvas.height / 2 - 40;
   helicopter.velocity = 0;
   obstacles = [];
   frameCount = 0;
