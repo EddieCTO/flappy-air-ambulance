@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flappy Air Ambulance</title>
+  <link rel="icon" href="data:image/png;base64,iVBORw0KGgo="> <!-- tiny dummy favicon -->
   <style>
     body {
       margin: 0;
@@ -39,7 +40,11 @@
     <span id="speedValue">2</span>
   </div>
 
-  <audio id="flapSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+  <!-- Replaced .ogg with mp3 for better browser support -->
+  <audio id="flapSound" preload="auto">
+    <source src="https://www.soundjay.com/button/sounds/button-16.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
@@ -61,7 +66,7 @@
 
     const helicopterImg = new Image();
     helicopterImg.src =
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABBCAYAAABrR5bgAAAACXBIWXMAAAsTAAALEwEAmpwYAAADWklEQVR4nO2dTYgVQRSGD1vAcvIAFJfQCnKZsFEtAkygoFFOQOghKSR5A1U0kgPZACUeQQihdGLgzLCae/7WsZ5c/vNzxz1lC5c3J1dXXV1TUpwCagCOjAG9D8R9gvGDKlj3LHyKiA15AJygPYkpcigJ5TqKmlNqIFuKjRyoKepY36K6q5i2Wicf9qvgPAV7WCVqNW6r5QOap+ljUcFVa5hHOAnpRQ9VLfYAVu5gDtbgMgEXutRNqubDEcVbpIA3H0BevvLQVyNO9TwcNXtVNckuoMvER9P+Vk4ZKqnhpOqHrkAo9k64dVK4pLFPfT5j7Rr5/Et3+E9i9Wj+iV5rVzKIL/lJe2XP4sKtz1jU2dE11Ut34JbppYY+x6n9Esm9tRhYz4LgXmGhF+UeY5Sn1s77PMzNLEOl5SOG3YO7pgHy9t5gZ7pAfDdk+SCP2HKe+U3ypF7AZym+1miX1tCM+F5F+c70qPtTfE3MpZ/dKyGHFvPfZKbHre80G4pgU9WYdTfD5Oxf7onZzG8FtuXVi0tdcniHcpnSwkeuVVJYPUM3KXWLqGyXNzr7lbOpOcgD5L6YAx1nn2umxDD1EDP4ElWzvNQ24sF3Z7ls+JvF9V2uXNAYx9c1ZGznbh7fW0ac6pOXTDtGEOYqeBrvb8he1if4HvU1ffBy99lvbq5+4R9QQMnP7tXnryv71HvVp5ZpPXZk5fSvb+yGdD6/v8zVU7MGXddZ41efn2hEP6DNOgJ6s9a8WAAAAAElFTkSuQmCC";
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAaCAYAAACn3H0fAAAACXBIWXMAAAsTAAALEwEAmpwYAAAClUlEQVR4nO2VwU7CQBBGTxsAATBBDkgDJATaAA0QBMoB0oANaAA1oANEAPAB03ZHEOFLUHZRxZZzvEf9f1qfbYBEcx0BvAHvgEdNU04VvwlgWzV+qIUbphL9XkMNZLsCJ4+S6qSxfQO+1AvPzKNEMtaWy3cBRyrZ3O1BFybOjgzwKOZqANHgCK5BuWQavPaGLbdOhUtHzV9Y2xVBbc8rsxwla8us2uSBD/AQuzBaXY3cmHcpm6pmZcFQQTyG/hJrVhiyYgdIvUTczL+Fe03e4k3ko+6XTuxBXkFEc9MloEk5cEkZsMdZ4eNLP+scERAF1P6MrqHie8m78Z1mrpqGy5qbJixEDY3IfZ3O+SlF5jArKQoBfdjD3UoPQ0ZdY3AAAAAElFTkSuQmCC";
     helicopterImg.onload = () => {
       helicopterLoaded = true;
     };
@@ -144,7 +149,7 @@
     function flap() {
       velocity = lift;
       flapSound.currentTime = 0;
-      flapSound.play();
+      flapSound.play().catch(() => {});
     }
 
     document.addEventListener("keydown", flap);
