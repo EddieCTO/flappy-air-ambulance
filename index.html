@@ -64,12 +64,12 @@
     let speed = 2;
     let helicopterLoaded = false;
 
-    const helicopterImg = new Image();
-    helicopterImg.src =
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAaCAYAAACn3H0fAAAACXBIWXMAAAsTAAALEwEAmpwYAAAClUlEQVR4nO2VwU7CQBBGTxsAATBBDkgDJATaAA0QBMoB0oANaAA1oANEAPAB03ZHEOFLUHZRxZZzvEf9f1qfbYBEcx0BvAHvgEdNU04VvwlgWzV+qIUbphL9XkMNZLsCJ4+S6qSxfQO+1AvPzKNEMtaWy3cBRyrZ3O1BFybOjgzwKOZqANHgCK5BuWQavPaGLbdOhUtHzV9Y2xVBbc8rsxwla8us2uSBD/AQuzBaXY3cmHcpm6pmZcFQQTyG/hJrVhiyYgdIvUTczL+Fe03e4k3ko+6XTuxBXkFEc9MloEk5cEkZsMdZ4eNLP+scERAF1P6MrqHie8m78Z1mrpqGy5qbJixEDY3IfZ3O+SlF5jArKQoBfdjD3UoPQ0ZdY3AAAAAElFTkSuQmCC";
-    helicopterImg.onload = () => {
-      helicopterLoaded = true;
-    };
+const helicopterImg = new Image();
+helicopterImg.src = "https://eddiecto.github.io/flappy-air-ambulance/helicopter.png";
+helicopterImg.onload = () => {
+  helicopterLoaded = true;
+};
+
 
     function drawHelicopter() {
       if (helicopterLoaded) {
