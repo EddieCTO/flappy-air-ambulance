@@ -25,7 +25,7 @@
   <canvas id="gameCanvas" width="800" height="500"></canvas>
 
   <div id="controls">
-    <button onclick="startGame()">Start Game</button>
+    <button id="startBtn">Start Game</button>
     <label for="speedRange">Speed:</label>
     <input type="range" id="speedRange" min="1" max="10" value="3" />
   </div>
@@ -34,11 +34,9 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-const helicopterImg = new Image();
-helicopterImg.src = "https://eddiecto.github.io/flappy-air-ambulance/helicopter.png";
-helicopterImg.onload = () => {
-  helicopterLoaded = true;
-};
+    const helicopterImage = new Image();
+    helicopterImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Eurocopter_EC135_UK_Helicopter_Ambulance.jpg/320px-Eurocopter_EC135_UK_Helicopter_Ambulance.jpg";
+
     let helicopter = {
       x: 80,
       y: 150,
@@ -93,7 +91,7 @@ helicopterImg.onload = () => {
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw helicopter
+      // Apply gravity
       helicopter.velocity += gravity;
       helicopter.y += helicopter.velocity;
 
@@ -102,14 +100,17 @@ helicopterImg.onload = () => {
       // Draw obstacles
       drawObstacles();
 
-      // Collision detection (optional)
-
       if (gameRunning) {
         animationFrame = requestAnimationFrame(draw);
       }
     }
 
     function startGame() {
+      if (!helicopterImage.complete || helicopterImage.naturalWidth === 0) {
+        alert("Helicopter image not loaded yet. Please wait a second and try again.");
+        return;
+      }
+
       helicopter.y = 150;
       helicopter.velocity = 0;
       createObstacles();
@@ -130,6 +131,9 @@ helicopterImg.onload = () => {
     speedSlider.addEventListener("input", function () {
       speed = parseInt(this.value);
     });
+
+    // Start button
+    document.getElementById("startBtn").addEventListener("click", startGame);
   </script>
 </body>
 </html>
