@@ -41,10 +41,10 @@
   </div>
 
   <!-- Replaced .ogg with mp3 for better browser support -->
-  <audio id="flapSound" preload="auto">
-    <source src="https://www.soundjay.com/button/sounds/button-16.mp3" type="audio/mpeg" />
-    Your browser does not support the audio element.
-  </audio>
+//  <audio id="flapSound" preload="auto">
+//    <source src="https://www.soundjay.com/button/sounds/button-16.mp3" type="audio/mpeg" />
+//    Your browser does not support the audio element.
+//  </audio>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
@@ -53,7 +53,7 @@
     const startBtn = document.getElementById("startBtn");
     const speedSlider = document.getElementById("speedRange");
     const speedValue = document.getElementById("speedValue");
-    const flapSound = document.getElementById("flapSound");
+//    const flapSound = document.getElementById("flapSound");
 
     let gravity = 0.6;
     let lift = -10;
@@ -148,8 +148,8 @@ helicopterImg.onload = () => {
 
     function flap() {
       velocity = lift;
-      flapSound.currentTime = 0;
-      flapSound.play().catch(() => {});
+ //     flapSound.currentTime = 0;
+ //     flapSound.play().catch(() => {});
     }
 
     document.addEventListener("keydown", flap);
