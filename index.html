@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flappy Air Ambulance</title>
+<title>Flappy Air Ambulance - Canvas Helicopter</title>
 <style>
   body {
     margin: 0;
@@ -49,7 +49,6 @@
 <p id="score">Score: 0</p>
 
 <script>
-// === Globals ===
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const startButton = document.getElementById('startButton');
@@ -61,22 +60,11 @@ const pipeWidth = 60;
 const pipeGap = 150;
 const pipeSpeed = 2;
 
-let helicopterImg = new Image();
-// Flipped helicopter base64 (transparent PNG) with better visible shape
-helicopterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABZUlEQVRoge3ZsQ0CQRCF4YlASAMQZQBEIkoRUcQh7bGSjkDHCTDojy0ZcvOBALwtDA07eX5XW+q6moE8BiYfT4/g7uQf+u/nzntIcvk3WQfWMAkfVkF66k2f8zI9ZoRUcg6ykL3YQYZLKQQmyb2MJqgsCLynDPmIcZ8wJwQkOJZYxkISrLn1RGKt9VIyEEkkW1WUQjqUqwpBKRCWa4YwRwkknzHGSRIQSlMx5lkqUTTIC2JIhLnCrZKDKeJb8nxIs2Shl5kQnr6p+zn5PF6Z3Ip2zSvmfx63LfIFeRzVLzZh99aGOf31gGcc+IbZ3IUty+4uShYTXaHXPWEnG4Vmy58hve9vQxVYsK1Q3f5vlHb7ByrTOfJ7lP0V/5mQjHcGct+zN68kMIiP+XgfHlq09NLxX7EmYZd/lVhf9Wv+jvXTgSn/rkQ2AAAAAElFTkSuQmCC";
-
-let helicopterLoaded = false;
-helicopterImg.onload = () => {
-  helicopterLoaded = true;
-  console.log("Helicopter image loaded");
-};
-
-// Game variables
 let helicopter = {
   x: 80,
   y: canvas.height / 2,
-  width: 70,  // Increased width for visibility
-  height: 50, // Increased height for visibility
+  width: 70,
+  height: 50,
   velocity: 0,
 };
 
@@ -86,7 +74,7 @@ let score = 0;
 let gameRunning = false;
 let gameOver = false;
 
-// Sound effects
+// Sounds
 const flapSound = new Audio("https://actions.google.com/sounds/v1/animals/duck_quack.ogg");
 const hitSound = new Audio("https://actions.google.com/sounds/v1/impacts/crash.ogg");
 const pointSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
@@ -114,7 +102,6 @@ canvas.addEventListener('touchstart', e => {
 
 // Pipes generator
 function addPipe() {
-  // Pipe top height random between 50 and canvas.height - pipeGap - 50
   const pipeTopHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
   pipes.push({
     x: canvas.width,
@@ -124,23 +111,50 @@ function addPipe() {
   });
 }
 
-// Draw functions
+// Draw helicopter as a simple shape
 function drawHelicopter() {
-  if (helicopterLoaded) {
-    ctx.drawImage(helicopterImg, helicopter.x, helicopter.y, helicopter.width, helicopter.height);
-  } else {
-    // fallback: draw a red rectangle so you can see it
-    ctx.fillStyle = 'red';
-    ctx.fillRect(helicopter.x, helicopter.y, helicopter.width, helicopter.height);
-  }
+  const x = helicopter.x;
+  const y = helicopter.y;
+  const w = helicopter.width;
+  const h = helicopter.height;
+
+  ctx.save();
+  ctx.translate(x, y);
+
+  // Body
+  ctx.fillStyle = '#e74c3c'; // ambulance red
+  ctx.beginPath();
+  ctx.ellipse(w*0.4, h*0.5, w*0.3, h*0.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tail boom
+  ctx.fillRect(w*0.05, h*0.4, w*0.3, h*0.1);
+
+  // Rotor blade
+  ctx.fillStyle = '#333';
+  ctx.fillRect(w*0.2, h*0.1, w*0.4, h*0.05);
+
+  // Windows
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.ellipse(w*0.5, h*0.5, w*0.12, h*0.12, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Skids
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(w*0.1, h*0.9);
+  ctx.lineTo(w*0.8, h*0.9);
+  ctx.stroke();
+
+  ctx.restore();
 }
 
 function drawPipes() {
-  ctx.fillStyle = '#228B22'; // dark green pipes
+  ctx.fillStyle = '#228B22';
   pipes.forEach(pipe => {
-    // top pipe
     ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-    // bottom pipe
     ctx.fillRect(pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
   });
 }
@@ -149,20 +163,17 @@ function drawScore() {
   scoreDisplay.textContent = `Score: ${score}`;
 }
 
-// Game logic update
+// Game update logic
 function update() {
   helicopter.velocity += gravity;
   helicopter.y += helicopter.velocity;
 
-  // Prevent helicopter going off screen top
   if (helicopter.y < 0) {
     helicopter.y = 0;
     helicopter.velocity = 0;
   }
 
-  // Check collisions with pipes
   for (let pipe of pipes) {
-    // Collision detection rectangle vs rectangle
     if (
       helicopter.x + helicopter.width > pipe.x &&
       helicopter.x < pipe.x + pipeWidth &&
@@ -175,7 +186,6 @@ function update() {
       return;
     }
 
-    // Score update
     if (!pipe.passed && pipe.x + pipeWidth < helicopter.x) {
       pipe.passed = true;
       score++;
@@ -183,7 +193,6 @@ function update() {
     }
   }
 
-  // Helicopter hits bottom
   if (helicopter.y + helicopter.height > canvas.height) {
     gameOver = true;
     gameRunning = false;
@@ -191,19 +200,14 @@ function update() {
     startButton.textContent = "Restart Game";
   }
 
-  // Move pipes
   pipes.forEach(pipe => {
     pipe.x -= pipeSpeed;
   });
 
-  // Remove offscreen pipes
   pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
 
-  // Add new pipe every 90 frames (~1.5 seconds at 60fps)
   frameCount++;
-  if (frameCount % 90 === 0) {
-    addPipe();
-  }
+  if (frameCount % 90 === 0) addPipe();
 }
 
 // Draw everything
@@ -241,11 +245,10 @@ function startGame() {
   gameLoop();
 }
 
-// Button handler
 startButton.addEventListener('click', () => {
   if (!gameRunning) startGame();
 });
-
 </script>
+
 </body>
 </html>
