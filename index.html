@@ -2,166 +2,131 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flappy Air Ambulance</title>
-  <link rel="icon" href="data:image/png;base64,iVBORw0KGgo="> <!-- tiny dummy favicon -->
   <style>
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background: skyblue;
       text-align: center;
+      background: #cce7ff;
+      font-family: sans-serif;
     }
-
     canvas {
+      background: #87ceeb;
       display: block;
       margin: 0 auto;
-      background: linear-gradient(skyblue, #e0f7fa);
       border: 2px solid #333;
     }
-
-    .controls {
-      margin: 10px;
-    }
-
-    #speedValue {
-      font-weight: bold;
+    #controls {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h1>🚁 Flappy Air Ambulance</h1>
-  <canvas id="gameCanvas" width="480" height="640"></canvas>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
 
-  <div class="controls">
-    <button id="startBtn">Start / Restart</button>
+  <div id="controls">
+    <button onclick="startGame()">Start Game</button>
     <label for="speedRange">Speed:</label>
-    <input type="range" id="speedRange" min="1" max="5" step="0.5" value="2">
-    <span id="speedValue">2</span>
+    <input type="range" id="speedRange" min="1" max="10" value="3" />
   </div>
-
-  <!-- Replaced .ogg with mp3 for better browser support -->
-//  <audio id="flapSound" preload="auto">
-//    <source src="https://www.soundjay.com/button/sounds/button-16.mp3" type="audio/mpeg" />
-//    Your browser does not support the audio element.
-//  let flapSound = new Audio("https://eddiecto.github.io/flappy-air-ambulance/assets/sounds/button-16.mp3");
-
-//  </audio>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    const startBtn = document.getElementById("startBtn");
-    const speedSlider = document.getElementById("speedRange");
-    const speedValue = document.getElementById("speedValue");
-    const flapSound = document.getElementById("flapSound");
+    const helicopterImage = new Image();
+    helicopterImage.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Eurocopter_EC135_UK_Helicopter_Ambulance.jpg/320px-Eurocopter_EC135_UK_Helicopter_Ambulance.jpg";
 
-    let gravity = 0.6;
+    let helicopter = {
+      x: 80,
+      y: 150,
+      width: 80,
+      height: 40,
+      velocity: 0
+    };
+
+    let gravity = 0.5;
     let lift = -10;
-    let helicopterY = canvas.height / 2;
-    let velocity = 0;
+    let speed = 3;
     let obstacles = [];
-    let gameInterval;
-    let speed = 2;
-    let helicopterLoaded = false;
+    let gameRunning = false;
+    let animationFrame;
 
-const helicopterImg = new Image();
-helicopterImg.src = "https://eddiecto.github.io/flappy-air-ambulance/helicopter.png";
-helicopterImg.onload = () => {
-  helicopterLoaded = true;
-};
-
-
-    function drawHelicopter() {
-      if (helicopterLoaded) {
-        ctx.drawImage(helicopterImg, 50, helicopterY, 70, 50);
+    function createObstacles() {
+      obstacles = [];
+      for (let i = 0; i < 3; i++) {
+        let gap = 150;
+        let topHeight = Math.random() * (canvas.height - gap - 100);
+        obstacles.push({
+          x: canvas.width + i * 300,
+          width: 60,
+          top: topHeight,
+          bottom: canvas.height - topHeight - gap
+        });
       }
     }
 
     function drawObstacles() {
-      ctx.fillStyle = "green";
+      ctx.fillStyle = "#333";
       obstacles.forEach((obs) => {
-        ctx.fillRect(obs.x, 0, obs.width, obs.top);
-        ctx.fillRect(obs.x, obs.top + obs.gap, obs.width, canvas.height);
-      });
-    }
-
-    function updateObstacles() {
-      for (let obs of obstacles) {
+        ctx.fillRect(obs.x, 0, obs.width, obs.top); // Top
+        ctx.fillRect(obs.x, canvas.height - obs.bottom, obs.width, obs.bottom); // Bottom
         obs.x -= speed;
-      }
+      });
 
-      if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 200) {
-        let top = Math.random() * (canvas.height / 2);
+      // Remove and add new obstacles
+      if (obstacles[0].x + obstacles[0].width < 0) {
+        obstacles.shift();
+        let gap = 150;
+        let topHeight = Math.random() * (canvas.height - gap - 100);
         obstacles.push({
           x: canvas.width,
-          width: 40,
-          top: top,
-          gap: 150,
+          width: 60,
+          top: topHeight,
+          bottom: canvas.height - topHeight - gap
         });
       }
-
-      // Remove off-screen obstacles
-      if (obstacles.length && obstacles[0].x + obstacles[0].width < 0) {
-        obstacles.shift();
-      }
-    }
-
-    function checkCollision() {
-      for (let obs of obstacles) {
-        if (
-          50 < obs.x + obs.width &&
-          50 + 70 > obs.x &&
-          (helicopterY < obs.top || helicopterY + 50 > obs.top + obs.gap)
-        ) {
-          return true;
-        }
-      }
-      return helicopterY + 50 > canvas.height;
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawHelicopter();
+
+      // Draw helicopter
+      helicopter.velocity += gravity;
+      helicopter.y += helicopter.velocity;
+
+      ctx.drawImage(helicopterImage, helicopter.x, helicopter.y, helicopter.width, helicopter.height);
+
+      // Draw obstacles
       drawObstacles();
-    }
 
-    function gameLoop() {
-      velocity += gravity;
-      helicopterY += velocity;
+      // Collision detection (optional)
 
-      updateObstacles();
-      draw();
-
-      if (checkCollision()) {
-        clearInterval(gameInterval);
-        alert("🚨 Crash! Game Over.");
+      if (gameRunning) {
+        animationFrame = requestAnimationFrame(draw);
       }
     }
 
     function startGame() {
-      helicopterY = canvas.height / 2;
-      velocity = 0;
-      obstacles = [];
-      clearInterval(gameInterval);
-      gameInterval = setInterval(gameLoop, 1000 / 60);
+      helicopter.y = 150;
+      helicopter.velocity = 0;
+      createObstacles();
+      gameRunning = true;
+      cancelAnimationFrame(animationFrame);
+      draw();
     }
 
-    function flap() {
-      velocity = lift;
- //     flapSound.currentTime = 0;
- //     flapSound.play().catch(() => {});
-    }
+    // Controls
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "Space") {
+        helicopter.velocity = lift;
+      }
+    });
 
-    document.addEventListener("keydown", flap);
-    canvas.addEventListener("touchstart", flap);
-
-    startBtn.addEventListener("click", startGame);
-
-    speedSlider.addEventListener("input", () => {
-      speed = parseFloat(speedSlider.value);
-      speedValue.textContent = speed;
+    // Speed slider
+    const speedSlider = document.getElementById("speedRange");
+    speedSlider.addEventListener("input", function () {
+      speed = parseInt(this.value);
     });
   </script>
 </body>
