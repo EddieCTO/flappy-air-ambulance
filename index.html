@@ -41,6 +41,9 @@
 <div id="loading">Loading assets, please wait...</div>
 <canvas id="gameCanvas" width="400" height="600" style="display:none;"></canvas>
 <button id="startBtn" style="display:none;">Start Game</button>
+<audio id="flapSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+<audio id="hitSound" src="https://actions.google.com/sounds/v1/impacts/crash.ogg" preload="auto"></audio>
+
 
 <label id="speedLabel" for="speedControl" style="display:none; margin-top:10px;">
   Game Speed: <span id="speedValue">1.0</span>x
@@ -171,6 +174,7 @@ function drawStartScreen() {
 // Check collision with obstacles or ground/ceiling
 function checkCollision() {
   if (helicopter.y < 0 || helicopter.y + helicopter.height > canvas.height) {
+    hitSound.play();
     return true;
   }
   for (let obs of obstacles) {
@@ -179,6 +183,7 @@ function checkCollision() {
       helicopter.x < obs.x + OBSTACLE_WIDTH
     ) {
       if (helicopter.y < obs.top || helicopter.y + helicopter.height > canvas.height - obs.bottom) {
+        hitSound.play();
         return true;
       }
     }
@@ -235,6 +240,7 @@ function gameLoop() {
 
 function flyUp() {
   helicopter.velocity = LIFT;
+  flapSound.play();
 }
 
 // Keyboard support
