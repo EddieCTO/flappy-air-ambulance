@@ -62,7 +62,8 @@ const pipeGap = 150;
 const pipeSpeed = 2;
 
 let helicopterImg = new Image();
-helicopterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAACCAIAAAA5iLdGAAAFOklEQVRoge2Ye08bQRjHz1j5qCWVLRElRWm+QkSXRYEWiSpwACnZYwMJIBAT+iYVgqC3D+LrGypZySFiKKkSlkkKSICuCWCigU05eGZbhLBTRiNu4LtDjzN38mfc3OO2PB76YbyEzpPLMfPnn/efLdkcPJKEmxmc5cG9hXwRBwH2v7m+0Jh9Xu20fhbc5KScnNjaOIBr9dkaj9YF9SgQxyPOnypcywsSBmA43pSDkB0f+ltjyULZz+AX+88F+aI14DMCq/X95bFMPZKDCg6GecqxgFmzqkPj3MYceR1Pj/TLP0Amw0NYvEyL+L1jBdNj1eA4wGCxYpQyWB2RXL0eP7QexL8zChJTTKNxJ53wJwHVfApcYxOL40DXwykR4c+x6uUBS6Y8PDxTqO9nNMI4MRW7G7W+Y+Pt5DbwBSAsYkDyK0axYtE8tVZ46xVNK0xVZLK1SGK1SHK9aFPRwsarxByhxNYaxZMHCHyCQ7WDCrMIqsROj7SnIfRoGrA8kN0h1PxrwnRfC6lQrP0nyPAQvLKiMHLkaQayLkArVkHqjArWrAJJQ9lKcxIpa3FFHcsdUQpEUSxjpyKROIzBxFDuE81KKZEMq2SwTW1lL6/JJJ+GaLxDYkKKR8EY6hRJQ6TQUw1P+ByQRA1wD4Qe5J/Q0H5G/Ur3mh8iTpaXAG0hmDNYqpc86lFHWIE6RTpxUlBRNY1S+hFGFMNkk8Q4UAp2dxmKUQgAq95z3WvXlsV6Dqca27G6hMsxdyhRMLoAX9Mn7F1K0QkAT4h8M4UuF1vl2b0qDLXxZyy1JZ7+ipxqZJLNgPiKFk+P/3r77lYhJ6xu4HSCtCz1HlH6YuP5nmeEIEqP0ziKkYkSZvXsy8mNRkgIxPsWQ8v9YrScoc5PkOtGkpHKmnw0zPS1UMqXiCfjqRXyH/ByiZDy2Tu8UD5OQrJ92uQJZTp5BxdArjW4kqRkmxzGkQxJPeTkaHpOX4dbwPciwKf0g3ZfAMXBbLF1YTW6Aj0T3OYNq/N7q2bMKo5P4VNyvWMPrBUP04nqzRoEjmrXQqCDG8eVTPRfwKXHM1KVfntRE69Ts4aAzFrAk3FGpPfVFG9Lt81NLGL01gF4NMI70m4HR7u5yNlzTdh3hYv9d61WCeSvvAQZXvL9DmwIlFwT3xAURyZ3HOAoik5HgUSpZTjYhH8ioTHP9CXODI80oJYq3CngXAdUIqFi7p80DmC9qk1SXo8YBxCJZDtVLpwHiGNCXogLS+gZCq2PhV1ERItxP4E/5uwGJqUO2CrzqS+K4+j9f6cHPEE3mQcQhq9eMsqQXLj4HskxPe77yI4PSxM3n7h8wAAAABJRU5ErkJggg==";
+// Flipped helicopter base64 (transparent PNG) with better visible shape
+helicopterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABZUlEQVRoge3ZsQ0CQRCF4YlASAMQZQBEIkoRUcQh7bGSjkDHCTDojy0ZcvOBALwtDA07eX5XW+q6moE8BiYfT4/g7uQf+u/nzntIcvk3WQfWMAkfVkF66k2f8zI9ZoRUcg6ykL3YQYZLKQQmyb2MJqgsCLynDPmIcZ8wJwQkOJZYxkISrLn1RGKt9VIyEEkkW1WUQjqUqwpBKRCWa4YwRwkknzHGSRIQSlMx5lkqUTTIC2JIhLnCrZKDKeJb8nxIs2Shl5kQnr6p+zn5PF6Z3Ip2zSvmfx63LfIFeRzVLzZh99aGOf31gGcc+IbZ3IUty+4uShYTXaHXPWEnG4Vmy58hve9vQxVYsK1Q3f5vlHb7ByrTOfJ7lP0V/5mQjHcGct+zN68kMIiP+XgfHlq09NLxX7EmYZd/lVhf9Wv+jvXTgSn/rkQ2AAAAAElFTkSuQmCC";
 
 let helicopterLoaded = false;
 helicopterImg.onload = () => {
@@ -74,8 +75,8 @@ helicopterImg.onload = () => {
 let helicopter = {
   x: 80,
   y: canvas.height / 2,
-  width: 50,
-  height: 35,
+  width: 70,  // Increased width for visibility
+  height: 50, // Increased height for visibility
   velocity: 0,
 };
 
@@ -127,6 +128,10 @@ function addPipe() {
 function drawHelicopter() {
   if (helicopterLoaded) {
     ctx.drawImage(helicopterImg, helicopter.x, helicopter.y, helicopter.width, helicopter.height);
+  } else {
+    // fallback: draw a red rectangle so you can see it
+    ctx.fillStyle = 'red';
+    ctx.fillRect(helicopter.x, helicopter.y, helicopter.width, helicopter.height);
   }
 }
 
@@ -222,8 +227,8 @@ function startGame() {
   helicopter = {
     x: 80,
     y: canvas.height / 2,
-    width: 50,
-    height: 35,
+    width: 70,
+    height: 50,
     velocity: 0,
   };
   pipes = [];
