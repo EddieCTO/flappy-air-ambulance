@@ -130,11 +130,6 @@ function drawHelicopter() {
 }
 
 // Draw obstacles
-
-  
-ctx.drawImage(cloudImg, pipe.x, 0, pipeWidth, pipeTop);
-ctx.drawImage(skyscraperImg, pipe.x, pipeTop + gap, pipeWidth, canvas.height - pipeTop - gap);
-
 function drawObstacles() {
 ctx.globalAlpha = 0.9; // slightly transparent
   obstacles.forEach(obs => {
