@@ -74,6 +74,12 @@ let helicopter = {
   velocity: 0
 };
 
+const skyscraperImg = new Image();
+skyscraperImg.src = 'skyscraper.png'; // or base64 string
+
+const cloudImg = new Image();
+cloudImg.src = 'cloud.png'; // or base64 string
+
 let obstacles = [];
 let frameCount = 0;
 let gameSpeed = 1.0;
@@ -127,10 +133,12 @@ function drawHelicopter() {
 function drawObstacles() {
   ctx.fillStyle = '#228B22'; // dark green
   obstacles.forEach(obs => {
-    // Top pipe
+     // Top pipe
     ctx.fillRect(obs.x, 0, OBSTACLE_WIDTH, obs.top);
+     ctx.drawImage(cloudImg, obs.x, 0, OBSTACLE_WIDTH, obs.top);
     // Bottom pipe
     ctx.fillRect(obs.x, canvas.height - obs.bottom, OBSTACLE_WIDTH, obs.bottom);
+    ctx.drawImage(skyscraperImg, obs.x, canvas.height - obs.bottom, OBSTACLE_WIDTH, obs.bottom);
   });
 }
 
