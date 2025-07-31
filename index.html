@@ -132,16 +132,18 @@ function drawHelicopter() {
 // Draw obstacles
 
   
+ctx.drawImage(cloudImg, pipe.x, 0, pipeWidth, pipeTop);
+ctx.drawImage(skyscraperImg, pipe.x, pipeTop + gap, pipeWidth, canvas.height - pipeTop - gap);
+
 function drawObstacles() {
-//  ctx.fillStyle = '#228B22'; // dark green
+ctx.globalAlpha = 0.9; // slightly transparent
   obstacles.forEach(obs => {
      // Top pipe
-   // ctx.fillRect(obs.x, 0, OBSTACLE_WIDTH, obs.top);
      ctx.drawImage(cloudImg, obs.x, 0, OBSTACLE_WIDTH, obs.top);
     // Bottom pipe
-  //  ctx.fillRect(obs.x, canvas.height - obs.bottom, OBSTACLE_WIDTH, obs.bottom);
     ctx.drawImage(skyscraperImg, obs.x, canvas.height - obs.bottom, OBSTACLE_WIDTH, obs.bottom);
   });
+ctx.globalAlpha = 1.0; // reset alpha
 }
 
 // Draw score
